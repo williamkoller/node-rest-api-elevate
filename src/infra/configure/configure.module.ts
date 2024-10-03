@@ -6,7 +6,7 @@ const pathEnv = process.env.PATH_ENV;
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: pathEnv ? pathEnv : '.env.development.local',
+      envFilePath: pathEnv ?? '.env.development.local',
     }),
   ],
 })
