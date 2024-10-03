@@ -1,0 +1,18 @@
+version: '3.9'
+services:
+  node: 
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: node
+    entrypoint: sh -c 'npm ci && npm run start:dev'
+    volumes:
+      - .:/app
+      - ./node_modules:/app/node_modules
+    ports:
+      - ${PORT}:${PORT}
+    networks:
+      - node-net
+
+networks:
+  node-net:
