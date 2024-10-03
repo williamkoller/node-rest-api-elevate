@@ -4,11 +4,11 @@ import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import * as Sentry from '@sentry/node';
 import { Response } from 'express';
-import { SentryConfig } from './infra/config/sentry/sentry.config';
-import { AppModule } from './infra/ioc/app/app.module';
-import { Swagger } from './main/docs/swagger';
-import { HttpExceptionsFilter } from './ports/http/filters/http-exception.filter';
-import { GlobalConfig } from './infra/config/global/global.config';
+import { SentryConfig } from '@app/infra/config/sentry/sentry.config';
+import { AppModule } from '@app/infra/ioc/app/app.module';
+import { Swagger } from '@app/main/docs/swagger';
+import { HttpExceptionsFilter } from '@app/ports/http/filters/http-exception.filter';
+import { GlobalConfig } from '@app/infra/config/global/global.config';
 
 async function bootstrap() {
   const logger = new Logger('Main');
