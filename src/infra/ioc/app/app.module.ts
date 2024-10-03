@@ -1,20 +1,22 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { HealthCheckModule } from '../health-check/health-check.module';
-import { GlobalModule } from '../global/global.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
-import { SentryMiddleware } from '../../middleware/sentry.middleware';
+import { CompositeSentryInterceptor } from '../../../ports/http/interceptors/composite-sentry.interceptor';
+import { CustomSentryInterceptor } from '../../../ports/http/interceptors/custom-sentry.interceptor';
 import { SentryInterceptor } from '../../../ports/http/interceptors/sentry.interceptor';
-import { SentryConfig } from '../../config/sentry.config';
+import { SentryMiddleware } from '../../middleware/sentry.middleware';
+import { GlobalModule } from '../global/global.module';
+import { HealthCheckModule } from '../health-check/health-check.module';
 
 @Module({
   imports: [GlobalModule, HealthCheckModule],
   controllers: [],
   providers: [
+    SentryInterceptor,
+    CustomSentryInterceptor,
     {
       provide: APP_INTERCEPTOR,
-      useClass: SentryInterceptor,
+      useClass: CompositeSentryInterceptor,
     },
-    SentryConfig,
   ],
 })
 export class AppModule implements NestModule {

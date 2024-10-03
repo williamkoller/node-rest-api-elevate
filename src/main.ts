@@ -1,13 +1,14 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './infra/ioc/app/app.module';
-import { ConfigService } from '@nestjs/config';
 import { Logger } from '@nestjs/common';
-import { Swagger } from './main/docs/swagger';
+import { ConfigService } from '@nestjs/config';
+import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { Response } from 'express';
-import { SentryConfig } from './infra/config/sentry.config';
-import { HttpExceptionsFilter } from './ports/http/filters/http-exception.filter';
 import * as Sentry from '@sentry/node';
+import { Response } from 'express';
+import { SentryConfig } from './infra/config/sentry/sentry.config';
+import { AppModule } from './infra/ioc/app/app.module';
+import { Swagger } from './main/docs/swagger';
+import { HttpExceptionsFilter } from './ports/http/filters/http-exception.filter';
+import { GlobalConfig } from './infra/config/global/global.config';
 
 async function bootstrap() {
   const logger = new Logger('Main');
@@ -21,14 +22,16 @@ async function bootstrap() {
   app.useGlobalFilters(new HttpExceptionsFilter());
   Swagger.setup(app);
 
-  const port = app.get<ConfigService>(ConfigService).get<number>('PORT');
-  const host = app.get<ConfigService>(ConfigService).get<string>('HOST');
+  const port = new GlobalConfig(new ConfigService()).port;
+  const host = new GlobalConfig(new ConfigService()).host;
+  const nodeEnv = new GlobalConfig(new ConfigService()).nodeEnv;
+  const sentryDsn = new GlobalConfig(new ConfigService()).sentryDsn;
 
   app.getHttpAdapter().get('/', (_, res: Response) => {
     res.redirect('/api/health-check');
   });
 
-  SentryConfig.initial(new ConfigService(), app);
+  new SentryConfig(sentryDsn, nodeEnv).initial(app);
 
   app.use(Sentry.Handlers.requestHandler());
   app.use(Sentry.Handlers.errorHandler());
