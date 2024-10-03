@@ -1,18 +1,18 @@
-version: '3.9'
+version: '3.8'
 services:
-  node: 
+  node-elevate:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: node
-    entrypoint: sh -c 'npm ci && npm run start:dev'
+    container_name: node-elevate
+    entrypoint: sh -c 'npm install && npm run start:dev'
     volumes:
       - .:/app
       - ./node_modules:/app/node_modules
     ports:
       - ${PORT}:${PORT}
     networks:
-      - node-net
+      - node-elevate-net
 
 networks:
-  node-net:
+  node-elevate-net:
