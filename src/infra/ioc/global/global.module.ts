@@ -10,4 +10,4 @@ const pathEnv = process.env.PATH_ENV;
     }),
   ],
 })
-export class ConfigureModule {}
+export class GlobalModule {}
